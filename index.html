@@ -83,7 +83,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(10,14,26,0.95);backdrop-fi
 /* PREDICTION BOX */
 .prediction-box{margin:0 18px 18px;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.25);border-radius:10px;padding:14px 16px}
 .pred-title{font-size:.78rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.pred-items{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pred-items{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:480px}
 .pred-item{background:rgba(255,255,255,.04);border-radius:8px;padding:10px 12px}
 .pred-label{font-size:.72rem;color:var(--muted);margin-bottom:4px}
 .pred-value{font-size:.95rem;font-weight:700;color:var(--text)}
@@ -244,8 +244,6 @@ const MATCHES = [
     prediction: {
       winner: { label:'勝負預測', value:'領航猿勝', result:'hit' },
       spread: { label:'讓分盤', value:'領航猿 -8.5', result:'hit' },
-      total:  { label:'大小分', value:'大 (198.5)', result:'hit' },
-      mvp:    { label:'焦點球員', value:'米爾納', result:'hit' },
     },
     mvps: [
       { name:'米爾納', stats:'31分 5籃板 3助攻', icon:'🔥' },
