@@ -1,297 +1,127 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>運彩分析站</title>
-  <style>
-    :root {
-      --bg: #0a0e1a;
-      --bg2: #0f1624;
-      --card: #131b2e;
-      --border: #1e2d4a;
-      --accent: #00d4ff;
-      --accent2: #7c3aed;
-      --accent3: #10b981;
-      --text: #e2e8f0;
-      --muted: #64748b;
-      --gold: #f59e0b;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: "Microsoft JhengHei", "Segoe UI", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-    /* NAV */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(10,14,26,0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center;
-      padding: 0 32px; height: 64px; gap: 8px;
-    }
-    .nav-logo {
-      color: var(--accent); font-size: 1.2rem; font-weight: 900;
-      letter-spacing: 2px; text-decoration: none; margin-right: auto;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .nav-logo span { color: var(--text); }
-    .nav-links { display: flex; list-style: none; gap: 4px; }
-    .nav-links a {
-      color: var(--muted); text-decoration: none; padding: 8px 14px;
-      border-radius: 6px; font-size: 0.88rem; transition: all 0.2s;
-    }
-    .nav-links a:hover { color: var(--accent); background: rgba(0,212,255,0.08); }
-
-    /* HERO */
-    .hero {
-      position: relative; overflow: hidden;
-      padding: 80px 32px 60px;
-      background: linear-gradient(135deg, #0a0e1a 0%, #0d1528 50%, #0a0e1a 100%);
-      text-align: center;
-    }
-    .hero::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,212,255,0.12) 0%, transparent 70%),
-                  radial-gradient(ellipse 40% 40% at 20% 80%, rgba(124,58,237,0.1) 0%, transparent 60%);
-    }
-    .hero-tag {
-      display: inline-block; position: relative;
-      background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3);
-      color: var(--accent); padding: 4px 14px; border-radius: 20px;
-      font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px;
-    }
-    .hero h1 {
-      position: relative; font-size: 3rem; font-weight: 900;
-      background: linear-gradient(135deg, #fff 30%, var(--accent));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text; margin-bottom: 16px; line-height: 1.2;
-    }
-    .hero p {
-      position: relative; color: var(--muted); font-size: 1rem; max-width: 520px; margin: 0 auto 32px;
-    }
-    .hero-stats {
-      position: relative;
-      display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
-    }
-    .stat { text-align: center; }
-    .stat .num { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
-    .stat .lbl { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
-
-    /* SECTION TITLE */
-    .section-title {
-      font-size: 1.3rem; font-weight: 700; color: var(--text);
-      display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
-    }
-    .section-title::before {
-      content: ''; display: block; width: 4px; height: 22px;
-      background: linear-gradient(180deg, var(--accent), var(--accent2));
-      border-radius: 2px;
-    }
-
-    /* CONTAINER */
-    .container { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
-
-    /* SPORT TABS */
-    .sport-tabs {
-      display: flex; gap: 12px; margin-bottom: 36px; flex-wrap: wrap;
-    }
-    .sport-tab {
-      display: flex; align-items: center; gap: 8px;
-      padding: 12px 24px; border-radius: 10px;
-      background: var(--card); border: 1px solid var(--border);
-      color: var(--muted); font-size: 0.92rem; cursor: pointer;
-      transition: all 0.2s; text-decoration: none; font-weight: 600;
-    }
-    .sport-tab:hover, .sport-tab.active-b {
-      border-color: var(--accent); color: var(--accent);
-      background: rgba(0,212,255,0.08);
-      box-shadow: 0 0 16px rgba(0,212,255,0.15);
-    }
-    .sport-tab.active-f {
-      border-color: var(--accent3); color: var(--accent3);
-      background: rgba(16,185,129,0.08);
-      box-shadow: 0 0 16px rgba(16,185,129,0.15);
-    }
-    .sport-tab .icon { font-size: 1.1rem; }
-
-    /* LEAGUE GRID */
-    .leagues-section { margin-bottom: 56px; }
-    .league-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
-    .league-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 12px; padding: 20px 16px;
-      text-align: center; cursor: pointer;
-      transition: all 0.25s; text-decoration: none; display: block;
-    }
-    .league-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--accent);
-      box-shadow: 0 8px 32px rgba(0,212,255,0.15);
-    }
-    .league-card.football:hover {
-      border-color: var(--accent3);
-      box-shadow: 0 8px 32px rgba(16,185,129,0.15);
-    }
-    .league-card .lg-icon { font-size: 2rem; margin-bottom: 10px; }
-    .league-card .lg-name { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-    .league-card .lg-sub { font-size: 0.78rem; color: var(--muted); }
-    .badge-b {
-      display: inline-block; margin-top: 8px;
-      background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.3);
-      color: var(--accent); font-size: 0.7rem; padding: 2px 10px; border-radius: 20px;
-    }
-    .badge-f {
-      display: inline-block; margin-top: 8px;
-      background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3);
-      color: var(--accent3); font-size: 0.7rem; padding: 2px 10px; border-radius: 20px;
-    }
-
-    /* DIVIDER */
-    .divider {
-      border: none; border-top: 1px solid var(--border); margin: 48px 0;
-    }
-
-    /* POSTS SECTION */
-    .posts-header {
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;
-    }
-    .view-all {
-      color: var(--accent); font-size: 0.85rem; text-decoration: none;
-      border: 1px solid rgba(0,212,255,0.3); padding: 6px 16px; border-radius: 6px;
-      transition: all 0.2s;
-    }
-    .view-all:hover { background: rgba(0,212,255,0.1); }
-
-    .post-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
-    .post-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 14px; overflow: hidden; transition: all 0.25s;
-    }
-    .post-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(0,212,255,0.4);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
-    }
-    .post-img { position: relative; height: 180px; overflow: hidden; }
-    .post-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
-    .post-card:hover .post-img img { transform: scale(1.05); }
-    .post-img .sport-badge {
-      position: absolute; top: 12px; left: 12px;
-      background: rgba(0,212,255,0.85); color: #000;
-      font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px;
-    }
-    .post-img .sport-badge.fb { background: rgba(16,185,129,0.9); }
-    .post-body { padding: 18px; }
-    .post-meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-    .post-meta .dot { width: 4px; height: 4px; background: var(--muted); border-radius: 50%; }
-    .post-title { font-size: 0.97rem; font-weight: 700; color: var(--text); margin-bottom: 10px; line-height: 1.5; }
-    .post-title a { color: inherit; text-decoration: none; }
-    .post-title a:hover { color: var(--accent); }
-    .post-excerpt { font-size: 0.83rem; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
-    .post-footer { display: flex; align-items: center; justify-content: space-between; }
-    .read-more {
-      font-size: 0.82rem; color: var(--accent); text-decoration: none;
-      display: flex; align-items: center; gap: 4px;
-    }
-    .read-more:hover { text-decoration: underline; }
-    .share-btns { display: flex; gap: 6px; }
-    .share-btn {
-      width: 28px; height: 28px; border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.72rem; font-weight: 700; text-decoration: none; color: #fff;
-    }
-    .sf { background: #1877f2; }
-    .sl { background: #06c755; }
-    .sm { background: #0084ff; }
-
-    /* PAGINATION */
-    .pagination { display: flex; gap: 8px; margin-top: 40px; justify-content: center; flex-wrap: wrap; }
-    .pagination a, .pagination span {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 38px; height: 38px; border-radius: 8px;
-      border: 1px solid var(--border); font-size: 0.88rem;
-      color: var(--muted); text-decoration: none; transition: all 0.2s;
-    }
-    .pagination a:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,0.08); }
-    .pg-cur { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; font-weight: 700 !important; }
-
-    /* SIDEBAR */
-    .layout { display: grid; grid-template-columns: 1fr 280px; gap: 32px; }
-    .sidebar { display: flex; flex-direction: column; gap: 20px; }
-    .sb-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 12px; padding: 20px;
-    }
-    .sb-card h3 {
-      font-size: 0.9rem; font-weight: 700; color: var(--accent);
-      text-transform: uppercase; letter-spacing: 1px;
-      margin-bottom: 14px; padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-    }
-    .sb-search {
-      width: 100%; padding: 10px 14px;
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 8px; color: var(--text); font-size: 0.88rem; outline: none;
-    }
-    .sb-search:focus { border-color: var(--accent); }
-    .sb-search::placeholder { color: var(--muted); }
-    .sb-list { list-style: none; }
-    .sb-list li { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
-    .sb-list li:last-child { border-bottom: none; }
-    .sb-list li a { color: var(--muted); text-decoration: none; display: flex; justify-content: space-between; align-items: center; }
-    .sb-list li a:hover { color: var(--accent); }
-    .sb-list .cnt { color: var(--accent); font-size: 0.78rem; }
-    .analyst-card {
-      background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(0,212,255,0.1));
-      border: 1px solid rgba(124,58,237,0.3);
-      border-radius: 12px; padding: 20px; text-align: center;
-    }
-    .analyst-avatar {
-      width: 60px; height: 60px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent2), var(--accent));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem; margin: 0 auto 12px;
-    }
-    .analyst-name { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
-    .analyst-sub { font-size: 0.78rem; color: var(--muted); margin-bottom: 12px; }
-    .analyst-tag {
-      display: inline-block;
-      background: rgba(124,58,237,0.2); border: 1px solid rgba(124,58,237,0.4);
-      color: #a78bfa; font-size: 0.75rem; padding: 3px 12px; border-radius: 20px;
-      margin: 2px;
-    }
-
-    /* FOOTER */
-    footer {
-      background: var(--bg2); border-top: 1px solid var(--border);
-      text-align: center; padding: 28px; color: var(--muted); font-size: 0.82rem;
-      margin-top: 40px;
-    }
-    footer a { color: var(--accent); text-decoration: none; }
-
-    @media(max-width:900px){
-      .layout { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 2rem; }
-      .hero-stats { gap: 24px; }
-      nav { padding: 0 16px; }
-      .nav-links { display: none; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>運彩分析站</title>
+<style>
+:root{--bg:#0a0e1a;--bg2:#0f1624;--card:#131b2e;--border:#1e2d4a;--accent:#00d4ff;--accent2:#7c3aed;--accent3:#10b981;--text:#e2e8f0;--muted:#64748b;--gold:#f59e0b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft JhengHei","Segoe UI",sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+nav{position:sticky;top:0;z-index:100;background:rgba(10,14,26,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 32px;height:64px;gap:8px}
+.nav-logo{color:var(--accent);font-size:1.2rem;font-weight:900;letter-spacing:2px;text-decoration:none;margin-right:auto;cursor:pointer}
+.nav-logo span{color:var(--text)}
+.nav-links{display:flex;list-style:none;gap:4px}
+.nav-links a{color:var(--muted);text-decoration:none;padding:8px 14px;border-radius:6px;font-size:.88rem;transition:all .2s;cursor:pointer}
+.nav-links a:hover{color:var(--accent);background:rgba(0,212,255,.08)}
+.hero{position:relative;overflow:hidden;padding:70px 32px 50px;background:linear-gradient(135deg,#0a0e1a 0%,#0d1528 50%,#0a0e1a 100%);text-align:center}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(0,212,255,.12) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 20% 80%,rgba(124,58,237,.1) 0%,transparent 60%)}
+.hero-tag{display:inline-block;position:relative;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);color:var(--accent);padding:4px 14px;border-radius:20px;font-size:.78rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px}
+.hero h1{position:relative;font-size:2.8rem;font-weight:900;background:linear-gradient(135deg,#fff 30%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:14px;line-height:1.2}
+.hero p{position:relative;color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto 28px}
+.hero-stats{position:relative;display:flex;justify-content:center;gap:40px;flex-wrap:wrap}
+.stat .num{font-size:1.8rem;font-weight:800;color:var(--accent)}
+.stat .lbl{font-size:.78rem;color:var(--muted);margin-top:2px}
+.container{max-width:1200px;margin:0 auto;padding:48px 24px}
+.section-title{font-size:1.3rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.section-title::before{content:'';display:block;width:4px;height:22px;background:linear-gradient(180deg,var(--accent),var(--accent2));border-radius:2px}
+/* PAGE SYSTEM */
+.page{display:none}
+.page.active{display:block}
+/* LEAGUE GRID */
+.leagues-section{margin-bottom:52px}
+.league-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
+.league-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .25s;text-decoration:none;display:block}
+.league-card:hover,.league-card.basketball:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 8px 32px rgba(0,212,255,.18)}
+.league-card.football:hover{transform:translateY(-4px);border-color:var(--accent3);box-shadow:0 8px 32px rgba(16,185,129,.18)}
+.league-card .lg-icon{font-size:2rem;margin-bottom:10px}
+.league-card .lg-name{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:4px}
+.league-card .lg-sub{font-size:.78rem;color:var(--muted)}
+.badge-b{display:inline-block;margin-top:8px;background:rgba(0,212,255,.12);border:1px solid rgba(0,212,255,.3);color:var(--accent);font-size:.7rem;padding:2px 10px;border-radius:20px}
+.badge-f{display:inline-block;margin-top:8px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:var(--accent3);font-size:.7rem;padding:2px 10px;border-radius:20px}
+.divider{border:none;border-top:1px solid var(--border);margin:48px 0}
+/* DATE LIST */
+.date-list{display:flex;flex-direction:column;gap:12px}
+.date-row{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .2s}
+.date-row.open{border-color:var(--accent)}
+.date-header{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;cursor:pointer;user-select:none}
+.date-header:hover{background:rgba(0,212,255,.04)}
+.date-left{display:flex;align-items:center;gap:14px}
+.date-pill{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;font-size:.82rem;font-weight:700;padding:4px 14px;border-radius:20px;letter-spacing:.5px}
+.date-title{font-size:1rem;font-weight:700;color:var(--text)}
+.date-sub{font-size:.78rem;color:var(--muted);margin-top:2px}
+.date-meta{display:flex;align-items:center;gap:12px}
+.badge-count{font-size:.78rem;color:var(--muted)}
+.chevron{color:var(--muted);font-size:1rem;transition:transform .3s}
+.date-row.open .chevron{transform:rotate(180deg)}
+.date-body{display:none;padding:0 22px 20px}
+.date-row.open .date-body{display:block}
+/* REC CARDS */
+.rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:16px}
+.rec-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;transition:all .2s}
+.rec-card:hover{border-color:rgba(0,212,255,.3);background:rgba(255,255,255,.03)}
+.rec-sport-badge{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:10px}
+.rb-b{background:rgba(0,212,255,.15);color:var(--accent);border:1px solid rgba(0,212,255,.3)}
+.rb-f{background:rgba(16,185,129,.15);color:var(--accent3);border:1px solid rgba(16,185,129,.3)}
+.rec-title{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.5}
+.rec-league{font-size:.78rem;color:var(--muted);margin-bottom:10px}
+.rec-footer{display:flex;align-items:center;justify-content:space-between}
+.rec-read{font-size:.8rem;color:var(--accent);text-decoration:none;cursor:pointer}
+.share-btns{display:flex;gap:6px}
+.share-btn{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;text-decoration:none;color:#fff;cursor:pointer}
+.sf{background:#1877f2}.sl{background:#06c755}.sm{background:#0084ff}
+/* LEAGUE DETAIL PAGE */
+.back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-size:.88rem;cursor:pointer;margin-bottom:24px;padding:8px 16px;border:1px solid rgba(0,212,255,.3);border-radius:8px;transition:all .2s}
+.back-btn:hover{background:rgba(0,212,255,.08)}
+.league-post-list{display:flex;flex-direction:column;gap:16px}
+.lpost-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;gap:16px;align-items:flex-start;transition:all .2s;cursor:pointer}
+.lpost-card:hover{border-color:rgba(0,212,255,.35);transform:translateX(4px)}
+.lpost-card.football:hover{border-color:rgba(16,185,129,.35)}
+.lpost-date{min-width:70px;text-align:center}
+.lpost-date .day{font-size:1.6rem;font-weight:900;color:var(--accent);line-height:1}
+.lpost-date .mon{font-size:.72rem;color:var(--muted);margin-top:4px}
+.lpost-content{flex:1}
+.lpost-title{font-size:.97rem;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.5}
+.lpost-excerpt{font-size:.82rem;color:var(--muted);line-height:1.6}
+.lpost-arrow{color:var(--muted);font-size:1.2rem;align-self:center}
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:1fr 280px;gap:32px}
+.sidebar{display:flex;flex-direction:column;gap:20px}
+.sb-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+.sb-card h3{font-size:.9rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.sb-search{width:100%;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.88rem;outline:none}
+.sb-search:focus{border-color:var(--accent)}
+.sb-search::placeholder{color:var(--muted)}
+.sb-list{list-style:none}
+.sb-list li{padding:8px 0;border-bottom:1px solid var(--border);font-size:.85rem}
+.sb-list li:last-child{border-bottom:none}
+.sb-list li a{color:var(--muted);text-decoration:none;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.sb-list li a:hover{color:var(--accent)}
+.sb-list .cnt{color:var(--accent);font-size:.78rem}
+.analyst-card{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(0,212,255,.1));border:1px solid rgba(124,58,237,.3);border-radius:12px;padding:20px;text-align:center}
+.analyst-avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 12px}
+.analyst-name{font-size:1rem;font-weight:700;margin-bottom:4px}
+.analyst-sub{font-size:.78rem;color:var(--muted);margin-bottom:12px}
+.analyst-tag{display:inline-block;background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.4);color:#a78bfa;font-size:.75rem;padding:3px 12px;border-radius:20px;margin:2px}
+footer{background:var(--bg2);border-top:1px solid var(--border);text-align:center;padding:28px;color:var(--muted);font-size:.82rem;margin-top:40px}
+footer a{color:var(--accent);text-decoration:none}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.hero h1{font-size:2rem}.hero-stats{gap:24px}nav{padding:0 16px}.nav-links{display:none}}
+</style>
 </head>
 <body>
-
 <nav>
-  <a class="nav-logo" href="#">⚡ <span>運彩分析站</span></a>
+  <a class="nav-logo" onclick="showPage('home')">⚡ <span>運彩分析站</span></a>
   <ul class="nav-links">
-    <li><a href="#">首頁</a></li>
-    <li><a href="#">關於我們</a></li>
-    <li><a href="#">每日推薦</a></li>
-    <li><a href="#">分析教學</a></li>
+    <li><a onclick="showPage('home')">首頁</a></li>
+    <li><a onclick="showPage('basketball')">籃球</a></li>
+    <li><a onclick="showPage('football')">足球</a></li>
+    <li><a onclick="showPage('home')">每日推薦</a></li>
     <li><a href="#">聯絡我</a></li>
   </ul>
 </nav>
 
+<!-- HOME PAGE -->
+<div id="page-home" class="page active">
 <div class="hero">
   <div class="hero-tag">專業運彩分析</div>
   <h1>數據驅動 精準預測</h1>
@@ -303,213 +133,70 @@
     <div class="stat"><div class="num">每日</div><div class="lbl">更新推薦</div></div>
   </div>
 </div>
-
 <div class="container">
-
-  <!-- 籃球 -->
   <div class="leagues-section">
     <div class="section-title">🏀 籃球聯賽</div>
     <div class="league-grid">
-      <a href="#" class="league-card">
-        <div class="lg-icon">🏀</div>
-        <div class="lg-name">SBL</div>
-        <div class="lg-sub">超級籃球聯賽</div>
-        <span class="badge-b">台灣</span>
-      </a>
-      <a href="#" class="league-card">
-        <div class="lg-icon">🏀</div>
-        <div class="lg-name">TPBL</div>
-        <div class="lg-sub">台灣職業籃球聯賽</div>
-        <span class="badge-b">台灣</span>
-      </a>
-      <a href="#" class="league-card">
-        <div class="lg-icon">🏀</div>
-        <div class="lg-name">PLG</div>
-        <div class="lg-sub">P. LEAGUE+</div>
-        <span class="badge-b">台灣</span>
-      </a>
+      <div class="league-card basketball" onclick="showLeague('SBL','basketball')">
+        <div class="lg-icon">🏀</div><div class="lg-name">SBL</div><div class="lg-sub">超級籃球聯賽</div><span class="badge-b">台灣</span>
+      </div>
+      <div class="league-card basketball" onclick="showLeague('TPBL','basketball')">
+        <div class="lg-icon">🏀</div><div class="lg-name">TPBL</div><div class="lg-sub">台灣職業籃球聯賽</div><span class="badge-b">台灣</span>
+      </div>
+      <div class="league-card basketball" onclick="showLeague('PLG','basketball')">
+        <div class="lg-icon">🏀</div><div class="lg-name">PLG</div><div class="lg-sub">P. LEAGUE+</div><span class="badge-b">台灣</span>
+      </div>
     </div>
   </div>
-
-  <!-- 足球 -->
   <div class="leagues-section">
     <div class="section-title">⚽ 足球聯賽</div>
     <div class="league-grid">
-      <a href="#" class="league-card football">
-        <div class="lg-icon">🏆</div>
-        <div class="lg-name">五大聯賽</div>
-        <div class="lg-sub">英西義德法</div>
-        <span class="badge-f">歐洲</span>
-      </a>
-      <a href="#" class="league-card football">
-        <div class="lg-icon">🇩🇪</div>
-        <div class="lg-name">德甲乙</div>
-        <div class="lg-sub">Bundesliga 2</div>
-        <span class="badge-f">德國</span>
-      </a>
-      <a href="#" class="league-card football">
-        <div class="lg-icon">🇦🇺</div>
-        <div class="lg-name">澳甲</div>
-        <div class="lg-sub">A-League</div>
-        <span class="badge-f">澳洲</span>
-      </a>
-      <a href="#" class="league-card football">
-        <div class="lg-icon">🇺🇸</div>
-        <div class="lg-name">美足 MLS</div>
-        <div class="lg-sub">Major League Soccer</div>
-        <span class="badge-f">美國</span>
-      </a>
-      <a href="#" class="league-card football">
-        <div class="lg-icon">🇳🇱</div>
-        <div class="lg-name">荷蘭甲</div>
-        <div class="lg-sub">Eredivisie</div>
-        <span class="badge-f">荷蘭</span>
-      </a>
+      <div class="league-card football" onclick="showLeague('五大聯賽','football')">
+        <div class="lg-icon">🏆</div><div class="lg-name">五大聯賽</div><div class="lg-sub">英西義德法</div><span class="badge-f">歐洲</span>
+      </div>
+      <div class="league-card football" onclick="showLeague('德乙','football')">
+        <div class="lg-icon">🇩🇪</div><div class="lg-name">德甲乙</div><div class="lg-sub">Bundesliga 2</div><span class="badge-f">德國</span>
+      </div>
+      <div class="league-card football" onclick="showLeague('澳甲','football')">
+        <div class="lg-icon">🇦🇺</div><div class="lg-name">澳甲</div><div class="lg-sub">A-League</div><span class="badge-f">澳洲</span>
+      </div>
+      <div class="league-card football" onclick="showLeague('美足','football')">
+        <div class="lg-icon">🇺🇸</div><div class="lg-name">美足 MLS</div><div class="lg-sub">Major League Soccer</div><span class="badge-f">美國</span>
+      </div>
+      <div class="league-card football" onclick="showLeague('荷蘭甲','football')">
+        <div class="lg-icon">🇳🇱</div><div class="lg-name">荷蘭甲</div><div class="lg-sub">Eredivisie</div><span class="badge-f">荷蘭</span>
+      </div>
     </div>
   </div>
-
   <hr class="divider">
-
-  <!-- 文章 + 側欄 -->
   <div class="layout">
     <div>
-      <div class="posts-header">
-        <div class="section-title" style="margin-bottom:0">📋 最新分析</div>
-        <a href="#" class="view-all">查看全部 →</a>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+        <div class="section-title" style="margin-bottom:0">📅 每日推薦</div>
       </div>
-
-      <div class="post-grid">
-        <div class="post-card">
-          <div class="post-img">
-            <img src="https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=500&q=80" alt="籃球">
-            <span class="sport-badge">🏀 籃球</span>
-          </div>
-          <div class="post-body">
-            <div class="post-meta"><span>14 4月, 2026</span><span class="dot"></span><span>PLG</span></div>
-            <div class="post-title"><a href="#">運彩分析站－運彩分析－2026/4/14 and 4/15</a></div>
-            <div class="post-excerpt">深度解析今日 PLG 賽事數據，勝率預測與盤口分析一次掌握。</div>
-            <div class="post-footer">
-              <a href="#" class="read-more">閱讀更多 →</a>
-              <div class="share-btns">
-                <a href="#" class="share-btn sf">f</a>
-                <a href="#" class="share-btn sl">L</a>
-                <a href="#" class="share-btn sm">M</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="post-card">
-          <div class="post-img">
-            <img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=500&q=80" alt="足球">
-            <span class="sport-badge fb">⚽ 足球</span>
-          </div>
-          <div class="post-body">
-            <div class="post-meta"><span>13 4月, 2026</span><span class="dot"></span><span>五大聯賽</span></div>
-            <div class="post-title"><a href="#">運彩分析站－運彩分析－2026/4/13 and 4/14</a></div>
-            <div class="post-excerpt">五大聯賽週末焦點賽事分析，數據指標告訴你該怎麼押注。</div>
-            <div class="post-footer">
-              <a href="#" class="read-more">閱讀更多 →</a>
-              <div class="share-btns">
-                <a href="#" class="share-btn sf">f</a>
-                <a href="#" class="share-btn sl">L</a>
-                <a href="#" class="share-btn sm">M</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="post-card">
-          <div class="post-img">
-            <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=500&q=80" alt="籃球">
-            <span class="sport-badge">🏀 籃球</span>
-          </div>
-          <div class="post-body">
-            <div class="post-meta"><span>12 4月, 2026</span><span class="dot"></span><span>SBL</span></div>
-            <div class="post-title"><a href="#">運彩分析站－運彩分析－2026/4/12 and 4/13</a></div>
-            <div class="post-excerpt">SBL 季後賽關鍵場次解析，主客場勝率與近期狀態一覽。</div>
-            <div class="post-footer">
-              <a href="#" class="read-more">閱讀更多 →</a>
-              <div class="share-btns">
-                <a href="#" class="share-btn sf">f</a>
-                <a href="#" class="share-btn sl">L</a>
-                <a href="#" class="share-btn sm">M</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="post-card">
-          <div class="post-img">
-            <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=500&q=80" alt="足球">
-            <span class="sport-badge fb">⚽ 足球</span>
-          </div>
-          <div class="post-body">
-            <div class="post-meta"><span>11 4月, 2026</span><span class="dot"></span><span>荷蘭甲</span></div>
-            <div class="post-title"><a href="#">運彩分析站－運彩分析－2026/4/11 and 4/12</a></div>
-            <div class="post-excerpt">荷蘭甲聯賽本輪焦點賽事預測，主場優勢與進攻數據深度分析。</div>
-            <div class="post-footer">
-              <a href="#" class="read-more">閱讀更多 →</a>
-              <div class="share-btns">
-                <a href="#" class="share-btn sf">f</a>
-                <a href="#" class="share-btn sl">L</a>
-                <a href="#" class="share-btn sm">M</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="pagination">
-        <span class="pg-cur">1</span>
-        <a href="#">2</a><a href="#">3</a><a href="#">4</a>
-        <span>…</span>
-        <a href="#">236</a><a href="#">›</a>
-      </div>
+      <div class="date-list" id="date-list"></div>
     </div>
-
-    <!-- 側欄 -->
     <div class="sidebar">
-      <div class="sb-card">
-        <input type="text" class="sb-search" placeholder="🔍 搜尋文章…">
-      </div>
-
+      <div class="sb-card"><input type="text" class="sb-search" placeholder="🔍 搜尋文章…"></div>
       <div class="analyst-card">
         <div class="analyst-avatar">🎯</div>
         <div class="analyst-name">大偉哥</div>
         <div class="analyst-sub">資深運彩分析師</div>
-        <div>
-          <span class="analyst-tag">不追勝率</span>
-          <span class="analyst-tag">只求穩贏</span>
-          <span class="analyst-tag">每日更新</span>
-        </div>
+        <div><span class="analyst-tag">不追勝率</span><span class="analyst-tag">只求穩贏</span><span class="analyst-tag">每日更新</span></div>
       </div>
-
       <div class="sb-card">
-        <h3>近期文章</h3>
+        <h3>聯賽分類</h3>
         <ul class="sb-list">
-          <li><a href="#">運彩分析 2026/4/14 and 4/15 <span class="cnt">→</span></a></li>
-          <li><a href="#">運彩分析 2026/4/13 and 4/14 <span class="cnt">→</span></a></li>
-          <li><a href="#">運彩分析 2026/4/12 and 4/13 <span class="cnt">→</span></a></li>
-          <li><a href="#">運彩分析 2026/4/11 and 4/12 <span class="cnt">→</span></a></li>
+          <li><a onclick="showLeague('SBL','basketball')">🏀 SBL 超級籃球 <span class="cnt">(312)</span></a></li>
+          <li><a onclick="showLeague('TPBL','basketball')">🏀 TPBL <span class="cnt">(198)</span></a></li>
+          <li><a onclick="showLeague('PLG','basketball')">🏀 PLG <span class="cnt">(445)</span></a></li>
+          <li><a onclick="showLeague('五大聯賽','football')">⚽ 五大聯賽 <span class="cnt">(623)</span></a></li>
+          <li><a onclick="showLeague('德乙','football')">⚽ 德乙 <span class="cnt">(154)</span></a></li>
+          <li><a onclick="showLeague('澳甲','football')">⚽ 澳甲 <span class="cnt">(88)</span></a></li>
+          <li><a onclick="showLeague('美足','football')">⚽ 美足 MLS <span class="cnt">(119)</span></a></li>
+          <li><a onclick="showLeague('荷蘭甲','football')">⚽ 荷蘭甲 <span class="cnt">(176)</span></a></li>
         </ul>
       </div>
-
-      <div class="sb-card">
-        <h3>分類</h3>
-        <ul class="sb-list">
-          <li><a href="#">🏀 籃球 SBL <span class="cnt">(312)</span></a></li>
-          <li><a href="#">🏀 籃球 TPBL <span class="cnt">(198)</span></a></li>
-          <li><a href="#">🏀 籃球 PLG <span class="cnt">(445)</span></a></li>
-          <li><a href="#">⚽ 足球 五大聯賽 <span class="cnt">(623)</span></a></li>
-          <li><a href="#">⚽ 足球 德乙 <span class="cnt">(154)</span></a></li>
-          <li><a href="#">⚽ 足球 澳甲 <span class="cnt">(88)</span></a></li>
-          <li><a href="#">⚽ 足球 美足 <span class="cnt">(119)</span></a></li>
-          <li><a href="#">⚽ 足球 荷蘭甲 <span class="cnt">(176)</span></a></li>
-          <li><a href="#">📚 分析教學 <span class="cnt">(16)</span></a></li>
-        </ul>
-      </div>
-
       <div class="sb-card">
         <h3>彙整</h3>
         <ul class="sb-list">
@@ -521,10 +208,180 @@
     </div>
   </div>
 </div>
+</div>
 
-<footer>
-  <p>© 2026 <a href="#">運彩分析站</a> ‧ 本站內容僅供參考，博彩需量力而為，未滿18歲請勿進入。</p>
-</footer>
+<!-- LEAGUE DETAIL PAGE -->
+<div id="page-league" class="page">
+<div class="container">
+  <div class="back-btn" onclick="showPage('home')">← 返回首頁</div>
+  <div id="league-header" class="section-title"></div>
+  <div class="league-post-list" id="league-posts"></div>
+</div>
+</div>
 
+<!-- DATE DETAIL PAGE -->
+<div id="page-date" class="page">
+<div class="container">
+  <div class="back-btn" onclick="showPage('home')">← 返回首頁</div>
+  <div id="date-header" class="section-title"></div>
+  <div class="rec-grid" id="date-posts"></div>
+</div>
+</div>
+
+<footer><p>© 2026 <a href="#">運彩分析站</a> ‧ 本站內容僅供參考，博彩需量力而為，未滿18歲請勿進入。</p></footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+const POSTS = [
+  {id:1, date:'2026-04-14', sport:'basketball', league:'PLG',   title:'運彩分析站－運彩分析－2026/4/14 and 4/15', excerpt:'深度解析今日 PLG 賽事數據，勝率預測與盤口分析一次掌握。'},
+  {id:2, date:'2026-04-14', sport:'football',   league:'五大聯賽', title:'五大聯賽 2026/4/14 賽事推薦',               excerpt:'英超、西甲週末焦點賽事，數據指標完整解析。'},
+  {id:3, date:'2026-04-14', sport:'basketball', league:'SBL',   title:'SBL 2026/4/14 今日推薦',                   excerpt:'SBL 本輪主客場分析，勝負關鍵數據一次看透。'},
+  {id:4, date:'2026-04-13', sport:'football',   league:'五大聯賽', title:'運彩分析站－運彩分析－2026/4/13 and 4/14', excerpt:'五大聯賽週末焦點賽事分析，數據指標告訴你該怎麼押注。'},
+  {id:5, date:'2026-04-13', sport:'basketball', league:'TPBL',  title:'TPBL 2026/4/13 賽事推薦',                  excerpt:'TPBL 今日賽事完整分析，進攻效率與防守強度對比。'},
+  {id:6, date:'2026-04-12', sport:'basketball', league:'SBL',   title:'運彩分析站－運彩分析－2026/4/12 and 4/13', excerpt:'SBL 季後賽關鍵場次解析，主客場勝率與近期狀態一覽。'},
+  {id:7, date:'2026-04-12', sport:'football',   league:'德乙',   title:'德乙 2026/4/12 賽事推薦',                  excerpt:'德乙本輪焦點對決，升降級爭奪戰數據全解析。'},
+  {id:8, date:'2026-04-11', sport:'football',   league:'荷蘭甲', title:'運彩分析站－運彩分析－2026/4/11 and 4/12', excerpt:'荷蘭甲聯賽本輪焦點賽事預測，主場優勢與進攻數據深度分析。'},
+  {id:9, date:'2026-04-11', sport:'basketball', league:'PLG',   title:'PLG 2026/4/11 賽事推薦',                   excerpt:'PLG 季中賽事深度分析，關鍵球員狀態與盤口解讀。'},
+  {id:10,date:'2026-04-10', sport:'football',   league:'澳甲',   title:'澳甲 2026/4/10 賽事推薦',                  excerpt:'A-League 本輪精選推薦，主客場歷史戰績完整比對。'},
+  {id:11,date:'2026-04-10', sport:'football',   league:'美足',   title:'美足 MLS 2026/4/10 推薦',                  excerpt:'MLS 東西區交叉賽事分析，積分榜形勢與勝負預測。'},
+  {id:12,date:'2026-04-09', sport:'basketball', league:'TPBL',  title:'TPBL 2026/4/9 賽事推薦',                   excerpt:'TPBL 季末關鍵戰役分析，排名爭奪戰完整解讀。'},
+];
+
+// Group by date
+function groupByDate(posts){
+  const map = {};
+  posts.forEach(p=>{
+    if(!map[p.date]) map[p.date]=[];
+    map[p.date].push(p);
+  });
+  return map;
+}
+
+function formatDate(d){
+  const dt = new Date(d+'T00:00:00');
+  const m = dt.getMonth()+1;
+  const day = dt.getDate();
+  return { display: m+'/'+day, full: dt.getFullYear()+'年'+m+'月'+day+'日' };
+}
+
+// ── RENDER DATE LIST ──────────────────────────────────
+function renderDateList(){
+  const grouped = groupByDate(POSTS);
+  const dates = Object.keys(grouped).sort((a,b)=>b.localeCompare(a));
+  const container = document.getElementById('date-list');
+  container.innerHTML = '';
+  dates.forEach((date, idx)=>{
+    const posts = grouped[date];
+    const fd = formatDate(date);
+    const bCount = posts.filter(p=>p.sport==='basketball').length;
+    const fCount = posts.filter(p=>p.sport==='football').length;
+    const row = document.createElement('div');
+    row.className = 'date-row' + (idx===0?' open':'');
+    row.innerHTML = `
+      <div class="date-header" onclick="toggleDate(this)">
+        <div class="date-left">
+          <span class="date-pill">${fd.display}</span>
+          <div>
+            <div class="date-title">${fd.full} 推薦</div>
+            <div class="date-sub">共 ${posts.length} 場推薦</div>
+          </div>
+        </div>
+        <div class="date-meta">
+          ${bCount>0?'<span style="font-size:.78rem;color:var(--accent)">🏀 '+bCount+'</span>':''}
+          ${fCount>0?'<span style="font-size:.78rem;color:var(--accent3);margin-left:8px">⚽ '+fCount+'</span>':''}
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="date-body">
+        <div class="rec-grid">
+          ${posts.map(p=>`
+            <div class="rec-card">
+              <span class="rec-sport-badge ${p.sport==='basketball'?'rb-b':'rb-f'}">${p.sport==='basketball'?'🏀 籃球':'⚽ 足球'}</span>
+              <div class="rec-title">${p.title}</div>
+              <div class="rec-league">${p.league}</div>
+              <div class="rec-footer">
+                <span class="rec-read" onclick="showDateDetail('${date}')">閱讀更多 →</span>
+                <div class="share-btns">
+                  <span class="share-btn sf">f</span>
+                  <span class="share-btn sl">L</span>
+                  <span class="share-btn sm">M</span>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    container.appendChild(row);
+  });
+}
+
+function toggleDate(header){
+  const row = header.parentElement;
+  row.classList.toggle('open');
+}
+
+// ── PAGE NAVIGATION ───────────────────────────────────
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showLeague(leagueName, sport){
+  const posts = POSTS.filter(p=>p.league===leagueName);
+  const isFootball = sport==='football';
+  const icon = isFootball?'⚽':'🏀';
+  document.getElementById('league-header').textContent = icon+' '+leagueName+' 推薦文章';
+  const container = document.getElementById('league-posts');
+  if(posts.length===0){
+    container.innerHTML = '<p style="color:var(--muted);text-align:center;padding:40px">暫無文章，敬請期待</p>';
+  } else {
+    container.innerHTML = posts.map(p=>{
+      const fd = formatDate(p.date);
+      return `
+        <div class="lpost-card ${isFootball?'football':''}">
+          <div class="lpost-date">
+            <div class="day" style="color:${isFootball?'var(--accent3)':'var(--accent)'}">${fd.display}</div>
+            <div class="mon">2026</div>
+          </div>
+          <div class="lpost-content">
+            <div class="lpost-title">${p.title}</div>
+            <div class="lpost-excerpt">${p.excerpt}</div>
+          </div>
+          <div class="lpost-arrow">›</div>
+        </div>
+      `;
+    }).join('');
+  }
+  showPage('league');
+}
+
+function showDateDetail(date){
+  const posts = POSTS.filter(p=>p.date===date);
+  const fd = formatDate(date);
+  document.getElementById('date-header').textContent = '📅 '+fd.full+' 全部推薦';
+  const container = document.getElementById('date-posts');
+  container.innerHTML = posts.map(p=>`
+    <div class="rec-card">
+      <span class="rec-sport-badge ${p.sport==='basketball'?'rb-b':'rb-f'}">${p.sport==='basketball'?'🏀 籃球':'⚽ 足球'}</span>
+      <div class="rec-title">${p.title}</div>
+      <div class="rec-league">${p.league}</div>
+      <div class="rec-footer">
+        <span class="rec-read">閱讀全文 →</span>
+        <div class="share-btns">
+          <span class="share-btn sf">f</span>
+          <span class="share-btn sl">L</span>
+          <span class="share-btn sm">M</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  showPage('date');
+}
+
+// ── INIT ──────────────────────────────────────────────
+renderDateList();
+</script>
 </body>
 </html>
