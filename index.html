@@ -191,9 +191,7 @@ footer a{color:var(--accent);text-decoration:none}
       <div class="sb-card"><input type="text" class="sb-search" placeholder="🔍 搜尋文章…"></div>
       <div class="analyst-card">
         <div class="analyst-avatar">🎯</div>
-        <div class="analyst-name">大偉哥</div>
-        <div class="analyst-sub">資深運彩分析師</div>
-        <div><span class="analyst-tag">不追勝率</span><span class="analyst-tag">只求穩贏</span><span class="analyst-tag">每日更新</span></div>
+        <div class="analyst-name">RS</div>
       </div>
       <div class="sb-card">
         <h3>聯賽分類</h3>
@@ -226,6 +224,38 @@ footer a{color:var(--accent);text-decoration:none}
 // DATA — 每場比賽的推薦 + 結果
 // ════════════════════════════════════════════
 const MATCHES = [
+  {
+    id: 'sbl_0415_keelung_dacin',
+    date: '2026-04-15',
+    league: 'SBL',
+    sport: 'basketball',
+    time: '19:00',
+    status: 'preview',
+    home: { name: '基隆海神', short: '海神', logo: '🌊', score: null },
+    away: { name: '達欣工程', short: '達欣', logo: '🏗️', score: null },
+    quarters: [],
+    prediction: {
+      winner: { label:'盤口預測', value:'基隆海神盤口', result:'pending' },
+    },
+    mvps: [],
+    summary: '看好<strong>基隆海神盤口</strong>，主場優勢明顯，近期狀態穩定，防守端表現出色，值得支持。',
+  },
+  {
+    id: 'sbl_0415_yulon_taishin',
+    date: '2026-04-15',
+    league: 'SBL',
+    sport: 'basketball',
+    time: '21:00',
+    status: 'preview',
+    home: { name: '裕隆納智捷', short: '裕隆', logo: '🚗', score: null },
+    away: { name: '台新夢想家', short: '夢想家', logo: '⭐', score: null },
+    quarters: [],
+    prediction: {
+      winner: { label:'盤口預測', value:'裕隆納智捷盤口', result:'pending' },
+    },
+    mvps: [],
+    summary: '看好<strong>裕隆納智捷盤口</strong>，整體陣容深度勝出，控衛組織穩健，進攻節奏掌控能力強。',
+  },
   {
     id: 'bcl_0414_pilots_kings',
     date: '2026-04-14',
