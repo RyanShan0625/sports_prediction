@@ -68,7 +68,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(10,14,26,0.95);backdrop-fi
 .team-block{text-align:center;flex:1}
 .team-name{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:6px}
 .team-short{font-size:.72rem;color:var(--muted);margin-bottom:10px}
-.team-logo{font-size:2.4rem;margin-bottom:8px}
+.team-logo{font-size:2.4rem;margin-bottom:8px;display:flex;align-items:center;justify-content:center;min-height:60px} .team-logo-img{width:65px;height:65px;object-fit:contain}
 .team-score{font-size:3rem;font-weight:900;line-height:1}
 .score-win{color:var(--accent)}
 .score-lose{color:var(--muted)}
@@ -231,8 +231,8 @@ const MATCHES = [
     sport: 'basketball',
     time: '19:00',
     status: 'preview',
-    home: { name: '基隆黑鳶', short: '黑鳶', logo: '🌊', score: null },
-    away: { name: '台灣啤酒', short: '台啤', logo: '🏗️', score: null },
+    home: { name: '基隆黑鳶', short: '黑鳶', logo: 'blackkites', score: null },
+    away: { name: '台灣啤酒', short: '台啤', logo: 'beer', score: null },
     quarters: [],
     prediction: {
       winner: { label:'盤口預測', value:'基隆黑鳶+6.5', result:'pending' },
@@ -247,8 +247,8 @@ const MATCHES = [
     sport: 'basketball',
     time: '21:00',
     status: 'preview',
-    home: { name: '裕隆納智捷', short: '裕隆', logo: '🚗', score: null },
-    away: { name: '彰化柏力力', short: '柏力力', logo: '⭐', score: null },
+    home: { name: '裕隆納智捷', short: '裕隆', logo: 'yulon', score: null },
+    away: { name: '彰化柏力力', short: '柏力力', logo: 'powerplus', score: null },
     quarters: [],
     prediction: {
       winner: { label:'盤口預測', value:'裕隆納智捷-6.5', result:'pending' },
@@ -263,8 +263,8 @@ const MATCHES = [
     sport: 'basketball',
     time: '19:00',
     status: 'final', // 'preview' | 'live' | 'final'
-    home: { name: '桃園璞園領航猿', short: '領航猿', logo: '✈️', score: 110 },
-    away: { name: '新北國王', short: '國王', logo: '👑', score: 85 },
+    home: { name: '桃園璞園領航猿', short: '領航猿', logo: 'pilots', score: 110 },
+    away: { name: '新北國王', short: '國王', logo: 'kings', score: 85 },
     quarters: [
       { label:'Q1', home:14, away:16 },
       { label:'Q2', home:38, away:11 },
@@ -286,6 +286,27 @@ const MATCHES = [
              '領航猿豪取BCL Asia-East<strong>2連勝</strong>，順利晉級4強。',
   }
 ];
+
+// ════════════════════════════════════════════
+// TEAM LOGOS
+// ════════════════════════════════════════════
+const TEAM_LOGOS = {
+  'pilots': 'https://upload.wikimedia.org/wikipedia/zh/thumb/c/c6/%E6%A1%83%E5%9C%92%E7%92%9E%E5%9C%92%E9%A0%98%E8%88%AA%E7%8C%BF.svg/80px-%E6%A1%83%E5%9C%92%E7%92%9E%E5%9C%92%E9%A0%98%E8%88%AA%E7%8C%BF.svg.png',
+  'kings': 'https://upload.wikimedia.org/wikipedia/zh/thumb/f/ff/%E6%96%B0%E5%8C%97%E5%9C%8B%E7%8E%8B.png/80px-%E6%96%B0%E5%8C%97%E5%9C%8B%E7%8E%8B.png',
+  'blackkites': null,
+  'beer': 'https://upload.wikimedia.org/wikipedia/zh/a/a9/%E5%8F%B0%E7%81%A3%E5%95%A4%E9%85%92%E7%B1%83%E7%90%83%E9%9A%8A.png',
+  'yulon': 'https://upload.wikimedia.org/wikipedia/zh/8/8a/%E8%A3%95%E9%9A%86%E7%B4%8D%E6%99%BA%E6%8D%B7.png',
+  'powerplus': 'https://upload.wikimedia.org/wikipedia/zh/thumb/4/4a/%E5%BD%B0%E5%8C%96%E7%92%9E%E5%9C%92%E6%9F%8F%E5%8A%9B%E5%8A%9B%E7%B1%83%E7%90%83%E9%9A%8A.png/80px-%E5%BD%B0%E5%8C%96%E7%92%9E%E5%9C%92%E6%9F%8F%E5%8A%9B%E5%8A%9B%E7%B1%83%E7%90%83%E9%9A%8A.png'
+};
+const TEAM_LOGO_FALLBACK = {
+  'blackkites': '🦅'
+};
+function getTeamLogo(code) {
+  const url = TEAM_LOGOS[code];
+  if (url) return `<img src="${url}" alt="${code}" class="team-logo-img">`;
+  const fallback = TEAM_LOGO_FALLBACK[code];
+  return fallback || code;
+}
 
 // ════════════════════════════════════════════
 // RENDER HELPERS
@@ -336,7 +357,7 @@ function renderMatchCard(m) {
       </div>
       <div class="scoreboard">
         <div class="team-block">
-          <div class="team-logo">${m.home.logo}</div>
+          <div class="team-logo">${getTeamLogo(m.home.logo)}</div>
           <div class="team-name">${m.home.name}</div>
           <div class="team-short">主場</div>
           <div class="team-score ${m.status==='preview'?'score-pre':isHome?'score-win':'score-lose'}">
@@ -348,7 +369,7 @@ function renderMatchCard(m) {
           <div class="quarter-scores">${quartersHTML}</div>
         </div>
         <div class="team-block">
-          <div class="team-logo">${m.away.logo}</div>
+          <div class="team-logo">${getTeamLogo(m.away.logo)}</div>
           <div class="team-name">${m.away.name}</div>
           <div class="team-short">客場</div>
           <div class="team-score ${m.status==='preview'?'score-pre':!isHome?'score-win':'score-lose'}">
